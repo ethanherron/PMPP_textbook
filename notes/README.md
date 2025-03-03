@@ -29,3 +29,7 @@
 - 21. Dynamic Parallelism
 - 22. Advanced Practices and Future Evolution
 - 23. Conclusion and Outlook
+
+All notes are summarized/personalized to conversations I have with Claude while reading.
+
+
