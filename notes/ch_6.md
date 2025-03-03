@@ -202,3 +202,46 @@ Table 6.1 summarizes key CUDA optimization strategies to consider:
 - **Strategy**: Assign multiple units of parallelism to each thread
 
 > **Note**: These optimizations appear throughout different computation patterns covered in later chapters, often with context-specific implementations. 
+
+
+
+### Exercises
+
+```c
+__global__ void foo_kernel(float* a, float* b, float* c, float* d, float* e) {
+  unsigned int i = blockIdx.x*blockDim.x + threadIdx.x;
+  __shared__ float a_s[256];
+  __shared__ float bc_s[4*256];
+  a_s[threadIdx.x] = a[i];
+  for(unsigned int j = 0; j < 4, ++j) {
+    bc_s[j*256 + threadIdx.x] = b[j*blockDim.x*gridDim.x + i] + c[i*4 + j];
+  }
+  __syncthreads();
+  d[i + 8] = a_s[threadIdx.x];
+  e[i*8] = bc_s[threadIdx.x*4];
+}
+```
+
+For each of the following memory accesses, specify whether they are coalesced or uncoalesced or coalescing is not applicable:
+a. array a of line 5
+coalesced
+b. array a_s of like 5
+coalesced or N/A
+c. array b of line 7
+uncoalesced
+d. array c of line 7
+uncoalesced
+e. array bc_s of line 7
+uncoalesced or N/A
+f. array a_s of line 10
+coalesced or N/A
+g. array d of line 10
+coalesced
+h. array bc_s of line 11
+uncoalesced or N/A
+i. array e of line 11
+uncoalesced
+
+
+What is the floating point to global memory access ratio (in OP/B) of each of the following matrix-matrix multiplication kernels?
+a. 
